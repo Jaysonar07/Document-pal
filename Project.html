@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Pal - Your Personal Document Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        /* Pre-generated Tailwind CSS */
+        :root {
+          --light-bg: #f9f9f9;
+          --light-card: #ffffff;
+          --light-text-primary: #1d1d1f;
+          --light-text-secondary: #515154;
+          --light-border: #d2d2d7;
+          --accent-blue: #007aff;
+          --accent-blue-hover: #0071e3;
+        }
+        .dark {
+          --dark-bg: #121212;
+          --dark-card: #1e1e1e;
+          --dark-text-primary: #f5f5f7;
+          --dark-text-secondary: #a1a1a6;
+          --dark-border: #424245;
+        }
+        *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+        html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { margin: 0; line-height: inherit; }
+        h1, h3, h4, p, label { margin: 0; }
+        button { background-color: transparent; background-image: none; padding: 0; }
+        button:focus-visible { outline: 2px solid #007aff; outline-offset: 2px; }
+        textarea { resize: vertical; }
+        input, button, textarea, img { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; }
+        button, [role="button"] { cursor: pointer; }
+        a { color: inherit; text-decoration: inherit; }
+
+        .bg-accent-blue { background-color: var(--accent-blue); }
+        .hover\:bg-accent-blue:hover { background-color: var(--accent-blue); }
+        .bg-accent-blue-hover:hover { background-color: var(--accent-blue-hover); }
+        .bg-black { background-color: #000; }
+        .bg-gray-100:hover { background-color: #f3f4f6; }
+        .bg-gray-200 { background-color: #e5e7eb; }
+        .bg-green-500 { background-color: #22c55e; }
+        .bg-green-600:hover { background-color: #16a34a; }
+        .bg-light-bg { background-color: var(--light-bg); }
+        .bg-light-card { background-color: var(--light-card); }
+        .dark .dark\:bg-dark-bg { background-color: var(--dark-bg); }
+        .dark .dark\:bg-dark-card { background-color: var(--dark-card); }
+        .dark .dark\:bg-dark-border { background-color: var(--dark-border); }
+        .dark .dark\:hover\:bg-gray-800:hover { background-color: #1f2937; }
+
+        .border { border-width: 1px; }
+        .border-2 { border-width: 2px; }
+        .border-b { border-bottom-width: 1px; }
+        .border-b-2 { border-bottom-width: 2px; }
+        .border-dashed { border-style: dashed; }
+        .border-t-2 { border-top-width: 2px; }
+        .border-accent-blue { border-color: var(--accent-blue); }
+        .hover\:border-accent-blue:hover { border-color: var(--accent-blue); }
+        .border-light-border { border-color: var(--light-border); }
+        .dark .dark\:border-dark-border { border-color: var(--dark-border); }
+        .dark .dark\:hover\:border-accent-blue:hover { border-color: var(--accent-blue); }
+
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: .5rem; }
+        .rounded-xl { border-radius: 1rem; }
+        .rounded-2xl { border-radius: 1.5rem; }
+
+        .p-1 { padding: .25rem; }
+        .p-2 { padding: .5rem; }
+        .p-3 { padding: .75rem; }
+        .p-4 { padding: 1rem; }
+        .p-5 { padding: 1.25rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-2 { padding-left: .5rem; padding-right: .5rem; }
+        .px-3 { padding-left: .75rem; padding-right: .75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .px-8 { padding-left: 2rem; padding-right: 2rem; }
+        .py-1 { padding-top: .25rem; padding-bottom: .25rem; }
+        .py-2 { padding-top: .5rem; padding-bottom: .5rem; }
+        .py-3 { padding-top: .75rem; padding-bottom: .75rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .pt-6 { padding-top: 1.5rem; }
+        .pr-12 { padding-right: 3rem; }
+        
+        .flex { display: flex; }
+        .inline-block { display: inline-block; }
+        .inline-flex { display: inline-flex; }
+        .hidden { display: none; }
+        .dark .dark\:hidden { display: none; }
+        .dark .dark\:block { display: block; }
+        .block { display: block; }
+
+        .h-6 { height: 1.5rem; }
+        .w-6 { width: 1.5rem; }
+        .h-10 { height: 2.5rem; }
+        .w-10 { width: 2.5rem; }
+        .h-12 { height: 3rem; }
+        .w-12 { width: 3rem; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+
+        .max-w-4xl { max-width: 56rem; }
+        .max-w-lg { max-width: 32rem; }
+        .max-w-md { max-width: 28rem; }
+        
+        .flex-grow { flex-grow: 1; }
+        .transform { transform: translate(0, 0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1); }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: .15s; }
+        .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: .15s; }
+        .transition-shadow { transition-property: box-shadow; transition-timing-function: cubic-bezier(.4,0,.2,1); transition-duration: .15s; }
+        .duration-300 { transition-duration: .3s; }
+        
+        .scale-95 { --tw-scale-x: .95; --tw-scale-y: .95; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
+        .hover\:scale-105:hover { --tw-scale-x: 1.05; --tw-scale-y: 1.05; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
+        .hover\:scale-110:hover { --tw-scale-x: 1.1; --tw-scale-y: 1.1; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
+
+        .object-cover { object-fit: cover; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 50% { opacity: .5; } }
+
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-end { justify-content: flex-end; }
+        .flex-col { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-2 { gap: .5rem; }
+        .gap-3 { gap: .75rem; }
+        .gap-4 { gap: 1rem; }
+        .space-x-3 > :not([hidden]) ~ :not([hidden]) { margin-left: .75rem; }
+        .space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-left: 1rem; }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+        .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.25rem; }
+        
+        .fixed { position: fixed; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .top-0 { top: 0; }
+        .top-6 { top: 1.5rem; }
+        .right-0 { right: 0; }
+        .right-6 { right: 1.5rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .z-10 { z-index: 10; }
+        .z-50 { z-index: 50; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
+        .my-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+        .mb-3 { margin-bottom: .75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-10 { margin-bottom: 2.5rem; }
+        .mr-1\.5 { margin-right: 0.375rem; }
+        .mr-2 { margin-right: .5rem; }
+        .mr-3 { margin-right: .75rem; }
+        .mt-2 { margin-top: .5rem; }
+        .mt-3 { margin-top: .75rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mt-12 { margin-top: 3rem; }
+
+        .text-center { text-align: center; }
+        .text-sm { font-size: .875rem; line-height: 1.25rem; }
+        .text-xs { font-size: .75rem; line-height: 1rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .italic { font-style: italic; }
+
+        .text-accent-blue { color: var(--accent-blue); }
+        .text-light-text-primary { color: var(--light-text-primary); }
+        .text-light-text-secondary { color: var(--light-text-secondary); }
+        .text-red-500 { color: #ef4444; }
+        .hover\:text-red-500:hover { color: #ef4444; }
+        .text-white { color: #fff; }
+        .hover\:text-white:hover { color: #fff; }
+        .dark .dark\:text-dark-text-primary { color: var(--dark-text-primary); }
+        .dark .dark\:text-dark-text-secondary { color: var(--dark-text-secondary); }
+        .dark .dark\:hover\:text-white:hover { color: #fff; }
+        .dark .dark\:text-white { color: #fff; }
+        .hover\:text-accent-blue:hover { color: var(--accent-blue); }
+
+        .whitespace-pre-wrap { white-space: pre-wrap; }
+        .leading-none { line-height: 1; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .cursor-pointer { cursor: pointer; }
+        .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+        .disabled\:bg-gray-400:disabled { background-color: #9ca3af; }
+
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+        .focus\:ring-accent-blue:focus { --tw-ring-color: var(--accent-blue); }
+        
+        .bg-opacity-60 { --tw-bg-opacity: 0.6; background-color: rgb(0 0 0 / var(--tw-bg-opacity)); }
+        
+        /* Risk Badge Colors */
+        .bg-red-100 { background-color: #fee2e2; } .text-red-800 { color: #991b1b; } .dark .dark\:bg-red-900\/20 { background-color: rgb(127 29 29 / 0.2); }
+        .bg-yellow-100 { background-color: #fef9c3; } .text-yellow-800 { color: #854d0e; } .dark .dark\:bg-yellow-900\/20 { background-color: rgb(113 63 18 / 0.2); }
+        .bg-green-100 { background-color: #dcfce7; } .text-green-800 { color: #166534; } .dark .dark\:bg-green-900\/20 { background-color: rgb(20 83 45 / 0.2); }
+        .bg-blue-100 { background-color: #dbeafe; } .text-blue-800 { color: #1e40af; } .dark .dark\:bg-blue-900\/20 { background-color: rgb(30 58 138 / 0.2); }
+
+
+        @media (min-width: 640px) {
+          .sm\:p-6 { padding: 1.5rem; }
+          .sm\:w-auto { width: auto; }
+          .sm\:flex-row { flex-direction: row; }
+          .sm\:text-left { text-align: left; }
+          .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (min-width: 768px) {
+          .md\:p-8 { padding: 2rem; }
+          .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        }
+        
+        /* Custom Styles */
+        body.modal-open {
+            overflow: hidden;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .drag-over { box-shadow: 0 0 0 2px var(--accent-blue) !important; border-color: var(--accent-blue) !important; }
+        .tone-button { padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 500; transition: all 0.2s ease-in-out; color: var(--light-text-secondary); }
+        .dark .tone-button { color: var(--dark-text-secondary); }
+        .tone-button.active { background-color: var(--accent-blue); color: white; box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39); }
+        .output-tab { padding: 0.75rem 1rem; margin-bottom: -1px; font-weight: 500; color: var(--light-text-secondary); border-bottom: 2px solid transparent; transition: all 0.2s ease-in-out; }
+        .dark .output-tab { color: var(--dark-text-secondary); }
+        .output-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+        .tab-panel { padding-top: 1.5rem; }
+        .copilot-action-button { flex-grow: 1; padding: 0.6rem 0.5rem; border-radius: 9999px; font-weight: 500; transition: all 0.2s ease-in-out; background-color: #e5e5ea; color: #1d1d1f; border: 1px solid transparent; }
+        .dark .copilot-action-button { background-color: #424245; color: #f5f5f7; }
+        .copilot-action-button:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .clause-explanation { font-size: 0.8rem; line-height: 1.4; }
+        #copilot-result-wrapper { max-height: 200px; overflow-y: auto; }
+        
+        #language-dropdown {
+            max-height: 12.5rem; /* 200px */
+            overflow-y: auto;
+        }
+
+        /* Splash Screen Animation */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-bg);
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        .dark #splash-screen {
+            background-color: var(--dark-bg);
+        }
+        #splash-screen.hidden-splash {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash-logo {
+            width: 250px;
+            animation: fadeInScale 1.5s ease-out forwards;
+        }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom scrollbar for language dropdown */
+        #language-dropdown::-webkit-scrollbar, #copilot-result-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+        #language-dropdown::-webkit-scrollbar-track, #copilot-result-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #language-dropdown::-webkit-scrollbar-thumb, #copilot-result-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--light-border);
+            border-radius: 20px;
+        }
+        .dark #language-dropdown::-webkit-scrollbar-thumb, .dark #copilot-result-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--dark-border);
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 640px) {
+            body {
+                -webkit-text-size-adjust: 100%;
+            }
+            .max-w-4xl {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            header .flex.items-center.gap-4 {
+                justify-content: flex-end;
+                width: 100%;
+            }
+            h1[data-lang-key="title"] {
+                font-size: 1.25rem; /* text-xl */
+            }
+            p[data-lang-key="tagline"] {
+                font-size: 0.75rem; /* text-xs */
+            }
+            #history-button, #language-switcher, #theme-toggle {
+                height: 2.5rem; /* h-10 */
+            }
+            #history-button {
+                padding: 0 1rem;
+            }
+            #language-switcher, #theme-toggle {
+                width: 2.5rem; /* w-10 */
+            }
+
+            #input-card, #results-container {
+                padding: 1rem; /* p-4 */
+                border-radius: 1rem; /* rounded-xl */
+            }
+
+            #analyze-button {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            .output-tab {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.5rem;
+            }
+            .output-tab .fas {
+                margin-right: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light-bg dark:bg-dark-bg text-light-text-primary dark:text-dark-text-primary transition-colors duration-300">
+    
+    <!-- App Opening Animation -->
+    <div id="splash-screen">
+        <div id="splash-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+              <defs>
+                <linearGradient id="backgroundGradient" x1="0.5" y1="0" x2="0.5" y2="1">
+                  <stop offset="0%" stop-color="#E1F5FE"></stop>
+                  <stop offset="100%" stop-color="#FFFFFF"></stop>
+                </linearGradient>
+              </defs>
+              <rect width="500" height="500" rx="60" ry="60" fill="url(#backgroundGradient)"></rect>
+              <g transform="translate(0, -20)">
+                <g transform="translate(145, 110) scale(1.2)">
+                  <path fill="#1A3A5D" d="M30,0 L130,0 L130,30 L100,0 L30,0 Z M30,5 L30,170 L95,170 L95,95 L110,110 L125,95 L125,65 L110,80 L95,65 L95,5 L30,5 Z M77.5,145 L50,117.5 L65,102.5 L87.5,115 L125,67.5 L140,82.5 L77.5,145 Z"></path>
+                  <path fill="#47C1BF" d="M130,35 L130,170 L170,170 L170,35 L140,35 L130,45 L130,35 Z M100,0 L130,30 L130,45 L140,35 L170,35 L170,0 L100,0 Z"></path>
+                </g>
+                <text x="250" y="360" font-family="Arial, sans-serif" font-size="52" font-weight="bold" text-anchor="middle">
+                  <tspan fill="#1A3A5D">Document</tspan>
+                  <tspan fill="#47C1BF"> Pal</tspan>
+                </text>
+                <text x="250" y="400" font-family="Arial, sans-serif" font-size="18" fill="#888B8D" letter-spacing="1.5" text-anchor="middle">
+                  DEMYSTIFY LEGAL DOCUMENTS
+                </text>
+              </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
+
+        <!-- Main Analysis Page -->
+        <div id="main-page" class="page active">
+            <!-- Header -->
+            <header class="flex justify-between items-center py-4 mb-8">
+                <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 p-1 bg-light-card dark:bg-dark-card rounded-lg flex items-center justify-center">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIiB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCI+ICA8ZGVmcz4gICAgPGxpbmVhckdyYWRpZW50IGlkPSJiYWNrZ3JvdW5kR3JhZGllbnQiIHgxPSIwLjUiIHkxPSIwIiB4Mj0iMC41IiB5Mj0iMSI+ICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0UxRjVGRSIgLz4gICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRkZGRkYiIC8+ICAgIDwvbGluZWFyR3JhZGllbnQ+ICA8L2RlZnM+ICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgcng9IjYwIiByeT0iNjAiIGZpbGw9InVybCgjYmFja2dyb3VuZEdyYWRpZW50KSIgLz4gIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsIC0yMCkiPiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDUsIDExMCkgc2NhbGUoMS4yKSI+ICAgICAgPHBhdGggZmlsbD0iIzFBM0E1RCIgZD0iTTMwLDAgTDEzMCwwIEwxMzAsMzAgTDEwMCwwIEwzMCwwIFogTTMwLDUgTDMwLDE3MCBMOTUsMTcwIEw5NSw5NSBMMTEwLDExMCBMMTI1LDk1IEwxMjUsNjUgTDExMCw4MCBMOTUsNjUgTDk1LDUgTDMwLDUgWiBNNzcuNSwxNDUgTDUwLDExNy41IEw2NSwxMDIuNSBMODcuNSwxMTUgTDEyNSw2Ny41IEwxNDAsODIuNSBMNzcuNSwxNDUgWiIvPiAgICAgIDxwYXRoIGZpbGw9IiM0N0MxQkYiIGQ9Ik0xMzAsMzUgTDEzMCwxNzAgTDE3MCwxNzAgTDE3MCwzNSBMMTQwLDM1IEwxMzAsNDUgTDEzMCwzNSBaIE0xMDAsMCBMMTMwLDMwIEwxMzAsNDUgTDE0MCwzNSBMMTcwLDM1IEwxNzAsMCBMMTAwLDAgWiIvPiAgICA8L2c+ICAgIDx0ZXh0IHg9IjI1MCIgeT0iMzYwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTIiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4gICAgICA8dHNwYW4gZmlsbD0iIzFBM0E1RCI+RG9jdW1lbnQ8L3RzcGFuPiAgICAgIDx0c3BhbiBmaWxsPSIjNDdDMUJGIj4gUGFsPC90c3Bhbj4gICAgPC90ZXh0PiAgICA8dGV4dCB4PSIyNTAiIHk9IjQwMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjODg4QjhEIiBsZXR0ZXItc3BhY2luZz0iMS41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4gICAgICBERU1ZU1RJRlkgTEVHQUwgRE9DVU1FTlRTICAgIDwvdGV4dD4gIDwvZz48L3N2Zz4=" alt="Document Pal Logo" class="w-full h-full object-cover rounded-md">
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-semibold" data-lang-key="title">Document Pal</h1>
+                        <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary" data-lang-key="tagline">Your personal document assistant</p>
+                    </div>
+                </div>
+                 <div class="flex items-center gap-4">
+                    <button id="history-button" class="px-5 py-2 rounded-full bg-light-card dark:bg-dark-card border border-light-border dark:border-dark-border font-medium text-sm text-light-text-secondary dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-accent-blue transition-colors" data-lang-key="history">
+                        History
+                    </button>
+                    <!-- Language Switcher -->
+                    <div class="relative">
+                        <button id="language-switcher" class="w-12 h-12 flex items-center justify-center rounded-full bg-light-card dark:bg-dark-card border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-accent-blue">
+                             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+                        </button>
+                        <div id="language-dropdown" class="absolute right-0 mt-1 w-auto bg-light-card dark:bg-dark-card border border-light-border dark:border-dark-border rounded-xl shadow-lg hidden z-10 p-2">
+                            <a href="#" class="lang-option block text-center px-4 py-2 text-sm rounded-full text-light-text-secondary dark:text-dark-text-secondary hover:bg-accent-blue hover:text-white dark:hover:text-white transition-colors" data-lang="en">English</a>
+                            <a href="#" class="lang-option block text-center px-4 py-2 text-sm rounded-full text-light-text-secondary dark:text-dark-text-secondary hover:bg-accent-blue hover:text-white dark:hover:text-white transition-colors" data-lang="hi">हिन्दी</a>
+                            <a href="#" class="lang-option block text-center px-4 py-2 text-sm rounded-full text-light-text-secondary dark:text-dark-text-secondary hover:bg-accent-blue hover:text-white dark:hover:text-white transition-colors" data-lang="bn">বাংলা</a>
+                            <a href="#" class="lang-option block text-center px-4 py-2 text-sm rounded-full text-light-text-secondary dark:text-dark-text-secondary hover:bg-accent-blue hover:text-white dark:hover:text-white transition-colors" data-lang="mr">मराठी</a>
+                            <a href="#" class="lang-option block text-center px-4 py-2 text-sm rounded-full text-light-text-secondary dark:text-dark-text-secondary hover:bg-accent-blue hover:text-white dark:hover:text-white transition-colors" data-lang="te">తెలుగు</a>
+                        </div>
+                    </div>
+                    <button id="theme-toggle" class="w-12 h-12 flex items-center justify-center rounded-full bg-light-card dark:bg-dark-card border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-accent-blue transition-all duration-300 transform hover:scale-110">
+                        <i class="fas fa-sun text-xl block dark:hidden"></i>
+                        <i class="fas fa-moon text-xl hidden dark:block"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main>
+                <!-- Input Section -->
+                <div id="input-card" class="bg-light-card dark:bg-dark-card p-6 md:p-8 rounded-2xl border border-light-border dark:border-dark-border shadow-sm mb-10 transition-all duration-300">
+                     <!-- Input Tabs: Text or Upload -->
+                    <div class="flex border-b border-light-border dark:border-dark-border mb-6">
+                        <button id="text-tab" class="px-4 py-3 font-medium border-b-2 border-accent-blue text-accent-blue" data-lang-key="pasteText">Paste Text</button>
+                        <button id="upload-tab" class="px-4 py-3 font-medium text-light-text-secondary dark:text-dark-text-secondary" data-lang-key="uploadFile">Upload File</button>
+                    </div>
+                    
+                    <div id="text-input-section">
+                        <textarea id="document-text" rows="10" class="w-full p-4 bg-light-bg dark:bg-dark-bg rounded-xl border border-light-border dark:border-dark-border focus:ring-2 focus:ring-accent-blue focus:outline-none transition-shadow" data-lang-placeholder="pastePlaceholder"></textarea>
+                    </div>
+                    
+                    <div id="upload-input-section" class="hidden">
+                        <div id="drop-zone" class="w-full flex flex-col justify-center items-center p-8 bg-light-bg dark:bg-dark-bg rounded-xl border-2 border-dashed border-light-border dark:border-dark-border cursor-pointer hover:border-accent-blue dark:hover:border-accent-blue transition-colors">
+                            <div id="upload-prompt" class="text-center text-light-text-secondary dark:text-dark-text-secondary">
+                                <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
+                                <p class="font-semibold" data-lang-key="uploadPrompt">Click to upload or drag & drop</p>
+                                <p class="text-sm" data-lang-key="fileTypes">PNG, JPG, or PDF</p>
+                                <input type="file" id="document-upload" class="hidden" accept="image/png, image/jpeg, application/pdf">
+                            </div>
+                            <div id="file-preview" class="hidden items-center space-x-3">
+                                <i id="file-icon" class="text-3xl"></i>
+                                <span id="file-name" class="font-medium text-sm"></span>
+                                <button id="remove-file" class="text-light-text-secondary dark:text-dark-text-secondary hover:text-red-500">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tone Selector -->
+                    <div class="mt-8">
+                        <label class="block mb-4 font-medium text-center text-light-text-secondary dark:text-dark-text-secondary" data-lang-key="analysisTone">Analysis Tone</label>
+                        <div id="tone-selector" class="flex flex-wrap justify-center gap-3 bg-light-bg dark:bg-dark-bg p-2 rounded-full">
+                            <button class="tone-button active" data-tone="Simple" data-lang-key="toneSimple">Simple</button>
+                            <button class="tone-button" data-tone="Professional" data-lang-key="toneProfessional">Professional</button>
+                            <button class="tone-button" data-tone="Brief" data-lang-key="toneBrief">Brief</button>
+                            <button class="tone-button" data-tone="Detailed" data-lang-key="toneDetailed">Detailed</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <button id="analyze-button" class="bg-accent-blue text-white font-semibold py-3 px-8 rounded-full hover:bg-accent-blue-hover transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed" data-lang-key="demystifyButton">
+                            Demystify Document
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <div id="loading-spinner" class="text-center p-8 hidden">
+                        <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent-blue"></div>
+                        <p class="mt-4 text-light-text-secondary dark:text-dark-text-secondary" id="loading-text" data-lang-key="loadingAnalyzing">Analyzing document...</p>
+                    </div>
+
+                    <div id="results-container" class="hidden animate-fade-in bg-light-card dark:bg-dark-card p-6 md:p-8 rounded-2xl border border-light-border dark:border-dark-border shadow-sm">
+                        <!-- Output Tabs -->
+                        <div class="flex border-b border-light-border dark:border-dark-border mb-6">
+                            <div class="flex">
+                                <button id="summary-tab" data-target="summary-panel" class="output-tab active" data-lang-key="tabSummary">
+                                    <i class="fas fa-file-alt mr-2"></i>Summary
+                                </button>
+                                <button id="clauses-tab" data-target="clauses-panel" class="output-tab" data-lang-key="tabClauses">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>Key Clauses
+                                </button>
+                                <button id="qa-tab" data-target="qa-panel" class="output-tab" data-lang-key="tabQA">
+                                    <i class="fas fa-question-circle mr-2"></i>Ask a Follow-up
+                                </button>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <button id="read-aloud-button" class="w-10 h-10 flex items-center justify-center rounded-full text-xl text-light-text-secondary dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent-blue" data-lang-title="readAloudTitle">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                        </div>
+
+                        <!-- Tab Panels -->
+                        <div id="summary-panel" class="tab-panel relative">
+                            <p id="summary-content" class="text-light-text-secondary dark:text-dark-text-secondary whitespace-pre-wrap"></p>
+                        </div>
+
+                        <div id="clauses-panel" class="tab-panel hidden">
+                            <div id="clauses-container" class="space-y-5"></div>
+                        </div>
+
+                        <div id="qa-panel" class="tab-panel hidden">
+                            <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary mb-4" data-lang-key="qaPrompt">Ask a specific question about the document.</p>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <input type="text" id="qa-input" class="flex-grow p-3 bg-light-bg dark:bg-dark-bg rounded-full border border-light-border dark:border-dark-border focus:ring-2 focus:ring-accent-blue focus:outline-none" data-lang-placeholder="qaPlaceholder">
+                                <button id="qa-button" class="bg-accent-blue text-white font-semibold py-3 px-5 rounded-full hover:bg-accent-blue-hover transition-colors disabled:bg-gray-400" data-lang-key="qaAsk">Ask</button>
+                            </div>
+                            <div id="qa-loading" class="text-center mt-4 hidden"><div class="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-accent-blue"></div></div>
+                            <div id="qa-answer" class="mt-4 p-4 bg-light-bg dark:bg-dark-bg rounded-xl hidden whitespace-pre-wrap"></div>
+                        </div>
+                        
+                        <!-- Save Section -->
+                        <div id="save-section" class="hidden mt-8 pt-6 border-t border-light-border dark:border-dark-border">
+                             <label for="save-name" class="block mb-3 font-medium text-light-text-secondary dark:text-dark-text-secondary" data-lang-key="saveAnalysis">Save Analysis to History</label>
+                             <div class="flex flex-col sm:flex-row gap-3">
+                                <input type="text" id="save-name" class="flex-grow p-3 bg-light-bg dark:bg-dark-bg rounded-full border border-light-border dark:border-dark-border focus:ring-2 focus:ring-accent-blue focus:outline-none" data-lang-placeholder="savePlaceholder">
+                                <button id="save-button" class="text-white font-semibold py-3 px-5 rounded-full transition-colors disabled:bg-gray-400 bg-green-500 hover:bg-green-600">
+                                     <i class="fas fa-save mr-2"></i><span data-lang-key="saveButton">Save</span>
+                                 </button>
+                             </div>
+                             <p id="save-name-error" class="text-red-500 text-sm mt-2 text-center sm:text-left hidden"></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <footer class="mt-12 text-center text-xs text-light-text-secondary dark:text-dark-text-secondary">
+                    <p><strong data-lang-key="disclaimerTitle">Disclaimer:</strong> <span data-lang-key="disclaimerText">Document Pal is for informational purposes only and is not a substitute for legal advice. Consult a qualified professional for legal matters.</span></p>
+                    <p class="mt-4">Created by <strong>Perpetual Motion Squad</strong>: Jay, Sujay, Alan, Tanishka</p>
+                </footer>
+            </main>
+        </div>
+
+        <!-- History Page -->
+        <div id="history-page" class="page">
+             <header class="flex justify-between items-center py-4 mb-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gray-200 dark:bg-dark-border p-3 rounded-lg">
+                       <i class="fas fa-history text-2xl text-accent-blue"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-semibold" data-lang-key="historyTitle">Document History</h1>
+                        <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary" data-lang-key="historySubtitle">Your previously analyzed documents</p>
+                    </div>
+                </div>
+                <button id="new-doc-button" class="bg-accent-blue text-white font-semibold py-2 px-5 rounded-full hover:bg-accent-blue-hover transition-colors">
+                    <i class="fas fa-plus mr-2"></i><span data-lang-key="newDocument">New Document</span>
+                </button>
+            </header>
+            <main id="history-list" class="space-y-4 animate-fade-in">
+                <!-- History items will be injected here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Clause Copilot Modal -->
+    <div id="copilot-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 animate-fade-in">
+        <div id="copilot-modal-content" class="bg-light-card dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-lg transition-transform transform scale-95 flex flex-col">
+            <div class="p-5 border-b border-light-border dark:border-dark-border flex justify-between items-center">
+                <h3 class="text-lg font-semibold flex items-center"><i class="fas fa-wand-magic-sparkles mr-3 text-accent-blue"></i><span data-lang-key="copilotTitle">Clause Copilot</span></h3>
+                <button id="close-copilot-modal" class="text-light-text-secondary dark:text-dark-text-secondary text-2xl leading-none hover:text-light-text-primary dark:hover:text-dark-text-primary">&times;</button>
+            </div>
+            <div class="p-6 flex-grow overflow-y-auto">
+                <p class="font-semibold mb-1 text-light-text-primary dark:text-dark-text-primary" id="copilot-clause-title"></p>
+                <p class="text-xs text-light-text-secondary dark:text-dark-text-secondary mb-4 italic" id="copilot-clause-explanation"></p>
+                <div class="grid sm:grid-cols-3 gap-3 mb-4">
+                     <button id="re-explain-button" class="copilot-action-button" data-lang-key="copilotReExplain">✨ Re-explain</button>
+                     <button id="what-if-button" class="copilot-action-button" data-lang-key="copilotWhatIf">✨ Ask "What if?"</button>
+                     <button id="draft-email-button" class="copilot-action-button" data-lang-key="copilotDraftEmail">✨ Draft Email</button>
+                </div>
+                <div id="copilot-loading" class="text-center p-4 hidden"><div class="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-accent-blue"></div></div>
+                <div id="copilot-result-wrapper" class="mt-4 p-4 bg-light-bg dark:bg-dark-bg rounded-xl hidden">
+                    <div id="copilot-result" class="whitespace-pre-wrap text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirm-delete-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 animate-fade-in">
+        <div class="bg-light-card dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold flex items-center"><i class="fas fa-exclamation-triangle text-red-500 mr-3"></i><span data-lang-key="deleteConfirmTitle">Confirm Deletion</span></h3>
+            <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary my-4" data-lang-key="deleteConfirmText">Are you sure you want to delete this document analysis? This action cannot be undone.</p>
+            <p class="text-xs text-light-text-secondary dark:text-dark-text-secondary italic" data-lang-key="deleteConfirmDisclaimer">Disclaimer: Deleting this item removes it permanently from your browser's local storage.</p>
+            <div class="flex justify-end gap-4 mt-6">
+                <button id="cancel-delete-button" class="px-4 py-2 rounded-full font-medium bg-light-bg dark:bg-dark-bg hover:bg-gray-200 dark:hover:bg-gray-700" data-lang-key="cancel">Cancel</button>
+                <button id="confirm-delete-button" class="px-4 py-2 rounded-full font-medium bg-red-500 text-white hover:bg-red-600" data-lang-key="delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 animate-fade-in">
+        <div class="bg-light-card dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-lg">
+            <div class="p-5 border-b border-light-border dark:border-dark-border flex justify-between items-center">
+                <h3 class="text-lg font-semibold flex items-center"><i class="fas fa-share-alt mr-3 text-accent-blue"></i><span data-lang-key="shareTitle">Share Summary</span></h3>
+                <button id="close-share-modal" class="text-light-text-secondary dark:text-dark-text-secondary text-2xl leading-none hover:text-light-text-primary dark:hover:text-dark-text-primary">&times;</button>
+            </div>
+            <div class="p-6">
+                <p id="share-title" class="font-semibold mb-2 text-light-text-primary dark:text-dark-text-primary"></p>
+                <textarea id="share-summary-text" rows="8" class="w-full p-3 bg-light-bg dark:bg-dark-bg rounded-xl border border-light-border dark:border-dark-border" readonly></textarea>
+                <button id="copy-summary-button" class="w-full mt-4 bg-accent-blue text-white font-semibold py-3 px-6 rounded-full hover:bg-accent-blue-hover transition-colors">
+                    <i class="fas fa-copy mr-2"></i><span data-lang-key="copyButton">Copy to Clipboard</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DOM Element References ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const docText = document.getElementById('document-text');
+        const analyzeButton = document.getElementById('analyze-button');
+        const outputSection = document.getElementById('output-section');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const loadingText = document.getElementById('loading-text');
+        const resultsContainer = document.getElementById('results-container');
+        const summaryContent = document.getElementById('summary-content');
+        const clausesContainer = document.getElementById('clauses-container');
+        const qaInput = document.getElementById('qa-input');
+        const qaButton = document.getElementById('qa-button');
+        const qaLoading = document.getElementById('qa-loading');
+        const qaAnswer = document.getElementById('qa-answer');
+        const inputCard = document.getElementById('input-card');
+        const dropZone = document.getElementById('drop-zone');
+        const docUpload = document.getElementById('document-upload');
+        const uploadPrompt = document.getElementById('upload-prompt');
+        const filePreview = document.getElementById('file-preview');
+        const fileIcon = document.getElementById('file-icon');
+        const fileName = document.getElementById('file-name');
+        const removeFile = document.getElementById('remove-file');
+        const textTab = document.getElementById('text-tab');
+        const uploadTab = document.getElementById('upload-tab');
+        const textInputSection = document.getElementById('text-input-section');
+        const uploadInputSection = document.getElementById('upload-input-section');
+        const toneSelector = document.getElementById('tone-selector');
+        const languageSwitcher = document.getElementById('language-switcher');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const readAloudButton = document.getElementById('read-aloud-button');
+
+        // Page elements
+        const mainPage = document.getElementById('main-page');
+        const historyPage = document.getElementById('history-page');
+        const historyButton = document.getElementById('history-button');
+        const newDocButton = document.getElementById('new-doc-button');
+        const historyList = document.getElementById('history-list');
+
+        // Output tabs
+        const summaryTab = document.getElementById('summary-tab');
+        const clausesTab = document.getElementById('clauses-tab');
+        const qaTab = document.getElementById('qa-tab');
+        const summaryPanel = document.getElementById('summary-panel');
+        const clausesPanel = document.getElementById('clauses-panel');
+        const qaPanel = document.getElementById('qa-panel');
+        const outputTabs = [summaryTab, clausesTab, qaTab];
+        const outputPanels = [summaryPanel, clausesPanel, qaPanel];
+
+        // Save section elements
+        const saveSection = document.getElementById('save-section');
+        const saveNameInput = document.getElementById('save-name');
+        const saveButton = document.getElementById('save-button');
+        const saveNameError = document.getElementById('save-name-error');
+
+        // Copilot Modal elements
+        const copilotModal = document.getElementById('copilot-modal');
+        const copilotModalContent = document.getElementById('copilot-modal-content');
+        const closeCopilotModal = document.getElementById('close-copilot-modal');
+        const copilotClauseTitle = document.getElementById('copilot-clause-title');
+        const copilotClauseExplanation = document.getElementById('copilot-clause-explanation');
+        const reExplainButton = document.getElementById('re-explain-button');
+        const whatIfButton = document.getElementById('what-if-button');
+        const draftEmailButton = document.getElementById('draft-email-button');
+        const copilotLoading = document.getElementById('copilot-loading');
+        const copilotResultWrapper = document.getElementById('copilot-result-wrapper');
+        const copilotResult = document.getElementById('copilot-result');
+        let activeClause = { title: '', explanation: '' };
+
+        // Delete Modal Elements
+        const confirmDeleteModal = document.getElementById('confirm-delete-modal');
+        const cancelDeleteButton = document.getElementById('cancel-delete-button');
+        const confirmDeleteButton = document.getElementById('confirm-delete-button');
+
+        // Share Modal Elements
+        const shareModal = document.getElementById('share-modal');
+        const closeShareModal = document.getElementById('close-share-modal');
+        const shareTitle = document.getElementById('share-title');
+        const shareSummaryText = document.getElementById('share-summary-text');
+        const copySummaryButton = document.getElementById('copy-summary-button');
+
+        let uploadedFile = null;
+        let documentContentForQA = "";
+        let selectedTone = 'Simple';
+        let currentAnalysisData = null;
+        let currentLang = 'en';
+        let currentAudio = null;
+
+
+        // --- Language Management ---
+        const translations = {
+            en: {
+                title: 'Document Pal',
+                tagline: 'Your personal document assistant',
+                history: 'History',
+                pasteText: 'Paste Text',
+                uploadFile: 'Upload File',
+                pastePlaceholder: 'Paste your document content here or drag & drop a file anywhere on this card...',
+                uploadPrompt: 'Click to upload or drag & drop',
+                fileTypes: 'PNG, JPG, or PDF',
+                analysisTone: 'Analysis Tone',
+                toneSimple: 'Simple',
+                toneProfessional: 'Professional',
+                toneBrief: 'Brief',
+                toneDetailed: 'Detailed',
+                demystifyButton: 'Demystify Document',
+                loadingAnalyzing: 'Analyzing document...',
+                loadingPreparing: 'Preparing document...',
+                loadingExtracting: 'Extracting text...',
+                loadingTranslating: 'Translating analysis...',
+                tabSummary: 'Summary',
+                tabClauses: 'Key Clauses',
+                tabQA: 'Ask a Follow-up',
+                qaPrompt: 'Ask a specific question about the document.',
+                qaPlaceholder: "e.g., 'What is the penalty for late payment?'",
+                qaAsk: 'Ask',
+                saveAnalysis: 'Save Analysis to History',
+                savePlaceholder: 'Enter a name for this analysis...',
+                saveButton: 'Save',
+                disclaimerTitle: 'Disclaimer:',
+                disclaimerText: 'Document Pal is for informational purposes only and is not a substitute for legal advice. Consult a qualified professional for legal matters.',
+                historyTitle: 'Document History',
+                historySubtitle: 'Your previously analyzed documents',
+                newDocument: 'New Document',
+                searchLanguage: 'Search language...',
+                readAloudTitle: 'Read summary aloud',
+                copilotTitle: 'Clause Copilot',
+                copilotReExplain: 'Re-explain',
+                copilotWhatIf: 'Ask "What if?"',
+                copilotDraftEmail: 'Draft Email',
+                copilotOriginalExplanation: 'Original Explanation:',
+                deleteConfirmTitle: 'Confirm Deletion',
+                deleteConfirmText: 'Are you sure you want to delete this document analysis? This action cannot be undone.',
+                deleteConfirmDisclaimer: "Disclaimer: Deleting this item removes it permanently from your browser's local storage.",
+                cancel: 'Cancel',
+                delete: 'Delete',
+                shareTitle: 'Share Summary',
+                copyButton: 'Copy to Clipboard',
+                copiedButton: 'Copied!',
+                saveErrorExists: 'A document with this name already exists.',
+                saveErrorNoName: 'Please enter a name for the analysis.',
+                savedButton: 'Saved!',
+                historyAnalyzedOn: 'Analyzed on'
+            },
+            hi: {
+                title: 'डॉक्यूमेंट पाल',
+                tagline: 'आपका व्यक्तिगत दस्तावेज़ सहायक',
+                history: 'इतिहास',
+                pasteText: 'टेक्स्ट पेस्ट करें',
+                uploadFile: 'फ़ाइल अपलोड करें',
+                pastePlaceholder: 'अपना दस्तावेज़ यहाँ पेस्ट करें या इस कार्ड पर कहीं भी फ़ाइल खींचें और छोड़ें...',
+                uploadPrompt: 'अपलोड करने के लिए क्लिक करें या खींचें और छोड़ें',
+                fileTypes: 'पीएनजी, जेपीजी, या पीडीएफ',
+                analysisTone: 'विश्लेषण टोन',
+                toneSimple: 'सरल',
+                toneProfessional: 'पेशेवर',
+                toneBrief: 'संक्षिप्त',
+                toneDetailed: 'विस्तृत',
+                demystifyButton: 'दस्तावेज़ को समझें',
+                loadingAnalyzing: 'दस्तावेज़ का विश्लेषण किया जा रहा है...',
+                loadingPreparing: 'दस्तावेज़ तैयार किया जा रहा है...',
+                loadingExtracting: 'टेक्स्ट निकाला जा रहा है...',
+                loadingTranslating: 'विश्लेषण का अनुवाद हो रहा है...',
+                tabSummary: 'सारांश',
+                tabClauses: 'मुख्य क्लॉज़',
+                tabQA: 'प्रश्न पूछें',
+                qaPrompt: 'दस्तावेज़ के बारे में एक विशिष्ट प्रश्न पूछें।',
+                qaPlaceholder: "उदा., 'देर से भुगतान करने पर क्या जुर्माना है?'",
+                qaAsk: 'पूछें',
+                saveAnalysis: 'विश्लेषण को इतिहास में सहेजें',
+                savePlaceholder: 'इस विश्लेषण के लिए एक नाम दर्ज करें...',
+                saveButton: 'सहेजें',
+                disclaimerTitle: 'अस्वीकरण:',
+                disclaimerText: 'डॉक्यूमेंट पाल केवल सूचना के उद्देश्यों के लिए है और कानूनी सलाह का विकल्प नहीं है। कानूनी मामलों के लिए एक योग्य पेशेवर से परामर्श करें।',
+                historyTitle: 'दस्तावेज़ इतिहास',
+                historySubtitle: 'आपके पहले विश्लेषण किए गए दस्तावेज़',
+                newDocument: 'नया दस्तावेज़',
+                searchLanguage: 'भाषा खोजें...',
+                readAloudTitle: 'सारांश पढ़ें',
+                copilotTitle: 'क्लॉज़ कोपायलट',
+                copilotReExplain: 'फिर से समझाएं',
+                copilotWhatIf: '"क्या होगा अगर?" पूछें',
+                copilotDraftEmail: 'ईमेल ड्राफ्ट करें',
+                copilotOriginalExplanation: 'मूल स्पष्टीकरण:',
+                deleteConfirmTitle: 'हटाने की पुष्टि करें',
+                deleteConfirmText: 'क्या आप वाकई इस दस्तावेज़ विश्लेषण को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
+                deleteConfirmDisclaimer: 'अस्वीकरण: इस आइटम को हटाने से यह आपके ब्राउज़र के स्थानीय भंडारण से स्थायी रूप से हट जाता है।',
+                cancel: 'रद्द करें',
+                delete: 'हटाएं',
+                shareTitle: 'सारांश साझा करें',
+                copyButton: 'क्लिपबोर्ड पर कॉपी करें',
+                copiedButton: 'कॉपी किया गया!',
+                saveErrorExists: 'इस नाम का एक दस्तावेज़ पहले से मौजूद है।',
+                saveErrorNoName: 'कृपया विश्लेषण के लिए एक नाम दर्ज करें।',
+                savedButton: 'सहेजा गया!',
+                historyAnalyzedOn: 'विश्लेषण किया गया'
+            },
+            bn: {
+                title: 'ডকুমেন্ট পাল',
+                tagline: 'আপনার ব্যক্তিগত ডকুমেন্ট সহকারী',
+                history: 'ইতিহাস',
+                pasteText: 'টেক্সট পেস্ট করুন',
+                uploadFile: 'ফাইল আপলোড করুন',
+                pastePlaceholder: 'আপনার ডকুমেন্ট এখানে পেস্ট করুন অথবা এই কার্ডের যেকোনো জায়গায় একটি ফাইল টেনে আনুন...',
+                uploadPrompt: 'আপলোড করতে ক্লিক করুন বা টেনে আনুন',
+                fileTypes: 'পিএনজি, জেপিজি, বা পিডিএফ',
+                analysisTone: 'বিশ্লেষণের ধরণ',
+                toneSimple: 'সরল',
+                toneProfessional: 'পেশাদার',
+                toneBrief: 'সংক্ষিপ্ত',
+                toneDetailed: 'বিস্তারিত',
+                demystifyButton: 'ডকুমেন্ট সহজ করুন',
+                loadingAnalyzing: 'ডকুমেন্ট বিশ্লেষণ করা হচ্ছে...',
+                loadingPreparing: 'ডকুমেন্ট প্রস্তুত করা হচ্ছে...',
+                loadingExtracting: 'টেক্সট বের করা হচ্ছে...',
+                loadingTranslating: 'বিশ্লেষণ অনুবাদ করা হচ্ছে...',
+                tabSummary: 'সারাংশ',
+                tabClauses: 'মূল ধারা',
+                tabQA: 'প্রশ্ন জিজ্ঞাসা করুন',
+                qaPrompt: 'ডকুমেন্ট সম্পর্কে একটি নির্দিষ্ট প্রশ্ন জিজ্ঞাসা করুন।',
+                qaPlaceholder: "যেমন, 'বিলম্বিত অর্থপ্রদানের জন্য জরিমানা কী?'",
+                qaAsk: 'জিজ্ঞাসা করুন',
+                saveAnalysis: 'ইতিহাসে বিশ্লেষণ সংরক্ষণ করুন',
+                savePlaceholder: 'এই বিশ্লেষণের জন্য একটি নাম লিখুন...',
+                saveButton: 'সংরক্ষণ করুন',
+                disclaimerTitle: 'দাবিত্যাগ:',
+                disclaimerText: 'ডকুমেন্ট পাল শুধুমাত্র তথ্যগত উদ্দেশ্যে এবং আইনি পরামর্শের বিকল্প নয়। আইনি বিষয়ের জন্য একজন যোগ্য পেশাদারের সাথে পরামর্শ করুন।',
+                historyTitle: 'ডকুমেন্ট ইতিহাস',
+                historySubtitle: 'আপনার পূর্বে বিশ্লেষণ করা ডকুমেন্ট',
+                newDocument: 'নতুন ডকুমেন্ট',
+                searchLanguage: 'ভাষা অনুসন্ধান করুন...',
+                readAloudTitle: 'সারাংশটি জোরে পড়ুন',
+                copilotTitle: 'ধারা কোপাইলট',
+                copilotReExplain: 'আবার ব্যাখ্যা করুন',
+                copilotWhatIf: '"যদি এমন হয়?" জিজ্ঞাসা করুন',
+                copilotDraftEmail: 'ইমেল খসড়া করুন',
+                copilotOriginalExplanation: 'মূল ব্যাখ্যা:',
+                deleteConfirmTitle: 'মুছে ফেলার বিষয়টি নিশ্চিত করুন',
+                deleteConfirmText: 'আপনি কি নিশ্চিত যে আপনি এই ডকুমেন্ট বিশ্লেষণটি মুছে ফেলতে চান? এই কাজটি ফিরিয়ে আনা যাবে না।',
+                deleteConfirmDisclaimer: 'দাবিত্যাগ: এই আইটেমটি মুছে ফেললে এটি আপনার ব্রাউজারের স্থানীয় স্টোরেজ থেকে স্থায়ীভাবে সরানো হবে।',
+                cancel: 'বাতিল করুন',
+                delete: 'মুছে ফেলুন',
+                shareTitle: 'সারাংশ শেয়ার করুন',
+                copyButton: 'ক্লিপবোর্ডে অনুলিপি করুন',
+                copiedButton: 'অনুলিপি করা হয়েছে!',
+                saveErrorExists: 'এই নামের একটি ডকুমেন্ট ইতিমধ্যে বিদ্যমান।',
+                saveErrorNoName: 'অনুগ্রহ করে বিশ্লেষণের জন্য একটি নাম লিখুন।',
+                savedButton: 'সংরক্ষিত!',
+                historyAnalyzedOn: 'বিশ্লেষণ করা হয়েছে'
+            },
+            mr: {
+                title: 'डॉक्युमेंट पाल',
+                tagline: 'तुमचा वैयक्तिक दस्तऐवज सहाय्यक',
+                history: 'इतिहास',
+                pasteText: 'टेक्स्ट पेस्ट करा',
+                uploadFile: 'फाईल अपलोड करा',
+                pastePlaceholder: 'तुमचा दस्तऐवज येथे पेस्ट करा किंवा या কার্ডवर कुठेही फाइल ड्रॅগ आणि ड्रॉप करा...',
+                uploadPrompt: 'अपलोड करण्यासाठी ক্লিক करा किंवा ड्रॅগ आणि ड्रॉप करा',
+                fileTypes: 'पीएनजी, जेपीजी, किंवा পিডিএফ',
+                analysisTone: 'विश्लेषण टोन',
+                toneSimple: 'सोपे',
+                toneProfessional: 'व्यावसायिक',
+                toneBrief: 'संक्षिप्त',
+                toneDetailed: 'तपशीलवार',
+                demystifyButton: 'दस्तऐवज सोपे करा',
+                loadingAnalyzing: 'दस्तऐवजाचे विश्लेषण करत आहे...',
+                loadingPreparing: 'दस्तऐवज तयार करत आहे...',
+                loadingExtracting: 'मजकूर काढत आहे...',
+                loadingTranslating: 'विश्लेषण অনুবাদित होत आहे...',
+                tabSummary: 'सारांश',
+                tabClauses: 'मुख्य कलमे',
+                tabQA: 'प्रश्न विचारा',
+                qaPrompt: 'दस्तऐवजाबद्दल विशिष्ट प्रश्न विचारा.',
+                qaPlaceholder: "उदा., 'उशिरा पेमेंटसाठी काय दंड आहे?'",
+                qaAsk: 'विचारा',
+                saveAnalysis: 'विश्लेषण इतिहासात जतन करा',
+                savePlaceholder: 'या विश्लेषणासाठी एक नाव प्रविष्ट करा...',
+                saveButton: 'जतन करा',
+                disclaimerTitle: 'अस्वीकरण:',
+                disclaimerText: 'डॉक्युमेंट पाल फक्त माहितीच्या उद्देशाने आहे आणि कायदेशीर सल्ल्याचा पर्याय नाही. कायदेशीर बाबींसाठी पात्र व्यावसायिकांचा सल्ला घ्या.',
+                historyTitle: 'दस्तऐवज इतिहास',
+                historySubtitle: 'तुमचे पूर्वीचे विश्लेषण केलेले दस्तऐवज',
+                newDocument: 'नवीन दस्तऐवज',
+                searchLanguage: 'भाषा शोधा...',
+                readAloudTitle: 'सारांश मोठ्याने वाचा',
+                copilotTitle: 'कलम कोपायलট',
+                copilotReExplain: 'पुन्हा समजावून सांगा',
+                copilotWhatIf: '"जर असे झाले तर?" विचारा',
+                copilotDraftEmail: 'ईमेल तयार करा',
+                copilotOriginalExplanation: 'मूळ स्पष्टीकरण:',
+                deleteConfirmTitle: 'हटवण्याची पुष्टी करा',
+                deleteConfirmText: 'तुम्हाला खात्री आहे की हे दस्तऐवज विश्लेषण हटवायचे आहे? ही क्रिया पूर्ववत केली जाऊ शकत नाही.',
+                deleteConfirmDisclaimer: 'अस्वीकरण: ही आयटम हटवल्याने ती तुमच्या ब्राउझरच्या स्थानिक स्टोरेजमधून कायमची काढून टाकली जाते.',
+                cancel: 'रद्द करा',
+                delete: 'हटवा',
+                shareTitle: 'सारांश सामायिक करा',
+                copyButton: 'क्लिपबोर्डवर कॉपी करा',
+                copiedButton: 'कॉपी केले!',
+                saveErrorExists: 'या नावाचा दस्तऐवज आधीपासून अस्तित्वात आहे.',
+                saveErrorNoName: 'कृपया विश्लेषणासाठी एक नाव प्रविष्ट करा.',
+                savedButton: 'जतन केले!',
+                historyAnalyzedOn: 'विश्लेषण केले'
+            },
+            te: {
+                title: 'డాక్యుమెంట్ పాల్',
+                tagline: 'మీ వ్యక్తిగత పత్ర సహాయకుడు',
+                history: 'చరిత్ర',
+                pasteText: 'వచనాన్ని అతికించండి',
+                uploadFile: 'ఫైల్‌ను అప్‌లోడ్ చేయండి',
+                pastePlaceholder: 'మీ పత్రం కంటెంట్‌ను ఇక్కడ అతికించండి లేదా ఈ కార్డ్‌లో ఎక్కడైనా ఫైల్‌ను లాగండి మరియు వదలండి...',
+                uploadPrompt: 'అప్‌లోడ్ చేయడానికి క్లిక్ చేయండి లేదా లాగండి మరియు వదలండి',
+                fileTypes: 'పిఎన్‌జి, జెపిజి, లేదా పిడిఎఫ్',
+                analysisTone: 'విశ్లేషణ టోన్',
+                toneSimple: 'సులభం',
+                toneProfessional: 'వృత్తిపరమైన',
+                toneBrief: 'సంక్షిప్తం',
+                toneDetailed: 'వివరణాత్మక',
+                demystifyButton: 'పత్రాన్ని సులభతరం చేయండి',
+                loadingAnalyzing: 'పత్రం విశ్లేషించబడుతోంది...',
+                loadingPreparing: 'పత్రం తయారు చేయబడుతోంది...',
+                loadingExtracting: 'వచనం సంగ్రహించబడుతోంది...',
+                loadingTranslating: 'విశ్లేషణ అనువదించబడుతోంది...',
+                tabSummary: 'సారాంశం',
+                tabClauses: 'కీలక నిబంధనలు',
+                tabQA: 'ప్రశ్న అడగండి',
+                qaPrompt: 'పత్రం గురించి ఒక నిర్దిష్ట ప్రశ్న అడగండి.',
+                qaPlaceholder: "ఉదా., 'ఆలస్యంగా చెల్లింపు కోసం జరిమానా ఏమిటి?'",
+                qaAsk: 'అడగండి',
+                saveAnalysis: 'విశ్లేషణను చరిత్రలో సేవ్ చేయండి',
+                savePlaceholder: 'ఈ విశ్లేషణ కోసం ఒక పేరును నమోదు చేయండి...',
+                saveButton: 'సేవ్ చేయండి',
+                disclaimerTitle: 'నిరాకరణ:',
+                disclaimerText: 'డాక్యుమెంట్ పాల్ కేవలం సమాచార ప్రయోజనాల కోసం మాత్రమే మరియు ఇది న్యాయ సలహాకు ప్రత్యామ్నాయం కాదు. న్యాయ విషయాల కోసం ఒక అర్హత కలిగిన నిపుణుడిని సంప్రదించండి.',
+                historyTitle: 'పత్ర చరిత్ర',
+                historySubtitle: 'మీరు గతంలో విశ్లేషించిన పత్రాలు',
+                newDocument: 'కొత్త పత్రం',
+                searchLanguage: 'భాషను శోధించండి...',
+                readAloudTitle: 'సారాంశాన్ని గట్టిగా చదవండి',
+                copilotTitle: 'నిబంధన కోపైలట్',
+                copilotReExplain: 'మళ్లీ వివరించండి',
+                copilotWhatIf: '"ఒకవేళ?" అని అడగండి',
+                copilotDraftEmail: 'ఇమెయిల్ డ్రాఫ్ట్ చేయండి',
+                copilotOriginalExplanation: 'అసలు వివరణ:',
+                deleteConfirmTitle: 'తొలగింపును నిర్ధారించండి',
+                deleteConfirmText: 'మీరు ఈ పత్ర విశ్లేషణను తొలగించాలనుకుంటున్నారని ఖచ్చితంగా ఉన్నారా? ఈ చర్యను రద్దు చేయలేరు.',
+                deleteConfirmDisclaimer: 'నిరాకరణ: ఈ అంశాన్ని తొలగించడం వల్ల ఇది మీ బ్రౌజర్ యొక్క స్థానిక నిల్వ నుండి శాశ్వతంగా తొలగించబడుతుంది.',
+                cancel: 'రద్దు చేయండి',
+                delete: 'తొలగించండి',
+                shareTitle: 'సారాంశాన్ని పంచుకోండి',
+                copyButton: 'క్లిప్‌బోర్డ్‌కు కాపీ చేయండి',
+                copiedButton: 'కాపీ చేయబడింది!',
+                saveErrorExists: 'ఈ పేరుతో ఒక పత్రం ఇప్పటికే ఉంది.',
+                saveErrorNoName: 'దయచేసి విశ్లేషణ కోసం ఒక పేరును నమోదు చేయండి.',
+                savedButton: 'సేవ్ చేయబడింది!',
+                historyAnalyzedOn: 'విశ్లేషించబడింది'
+            }
+        };
+
+        function setLanguage(lang) {
+            const oldLang = currentLang;
+            
+            // Update UI text first
+            const langStrings = translations[lang];
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.dataset.langKey;
+                if(langStrings[key]) el.textContent = langStrings[key];
+            });
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                const key = el.dataset.langPlaceholder;
+                 if(langStrings[key]) el.placeholder = langStrings[key];
+            });
+            document.querySelectorAll('[data-lang-title]').forEach(el => {
+                const key = el.dataset.langTitle;
+                 if(langStrings[key]) el.title = langStrings[key];
+            });
+
+            currentLang = lang;
+            localStorage.setItem('docPalLang', lang);
+
+            // If an analysis exists and the language has changed, re-analyze for translation
+            if(currentAnalysisData && oldLang !== lang) {
+                analyzeDocument(true); // Pass flag indicating this is a translation
+            }
+        }
+        
+        languageSwitcher.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!languageSwitcher.contains(e.target)) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.closest('.lang-option')) {
+                e.preventDefault();
+                const lang = e.target.closest('.lang-option').dataset.lang;
+                setLanguage(lang);
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        // --- Page Navigation ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        historyButton.addEventListener('click', () => {
+            renderHistory();
+            showPage('history-page');
+        });
+
+        newDocButton.addEventListener('click', () => showPage('main-page'));
+        
+        // --- History Management (localStorage) ---
+        function getHistory() {
+            return JSON.parse(localStorage.getItem('docPalHistory') || '[]');
+        }
+
+        function saveToHistory(title, analysisData) {
+            if (!title || !analysisData) return;
+            const history = getHistory();
+            const newEntry = {
+                id: Date.now(),
+                title: title,
+                date: new Date().toLocaleDateString(),
+                analysis: analysisData,
+                lang: currentLang
+            };
+            history.unshift(newEntry);
+            localStorage.setItem('docPalHistory', JSON.stringify(history.slice(0, 50))); // Keep latest 50
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            historyList.innerHTML = '';
+            if (history.length === 0) {
+                historyList.innerHTML = `<div class="text-center p-8 bg-light-card dark:bg-dark-card rounded-2xl border border-light-border dark:border-dark-border">
+                    <i class="fas fa-folder-open text-4xl text-light-text-secondary dark:text-dark-text-secondary mb-4"></i>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">No documents have been analyzed yet.</p>
+                </div>`;
+                return;
+            }
+            history.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'bg-light-card dark:bg-dark-card p-5 rounded-2xl border border-light-border dark:border-dark-border shadow-sm';
+                const summary = item.analysis && item.analysis.summary ? item.analysis.summary : 'No summary available.';
+                const analyzedOnText = translations[currentLang].historyAnalyzedOn || 'Analyzed on';
+
+                itemEl.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-lg">${item.title}</h3>
+                            <p class="text-xs text-light-text-secondary dark:text-dark-text-secondary">${analyzedOnText} ${item.date}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="share-history-item text-light-text-secondary dark:text-dark-text-secondary hover:text-accent-blue" title="Share Summary" data-summary="${encodeURIComponent(summary)}" data-title="${encodeURIComponent(item.title)}"><i class="fas fa-share-alt"></i></button>
+                            <button class="delete-history-item text-light-text-secondary dark:text-dark-text-secondary hover:text-red-500" title="Delete" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-sm text-light-text-secondary dark:text-dark-text-secondary">${summary.substring(0, 200)}...</p>
+                `;
+                historyList.appendChild(itemEl);
+            });
+            
+             // Add delete functionality
+            historyList.querySelectorAll('.delete-history-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const idToDelete = parseInt(e.currentTarget.dataset.id, 10);
+                    openDeleteModal(idToDelete);
+                });
+            });
+            // Add share functionality
+            historyList.querySelectorAll('.share-history-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const summary = decodeURIComponent(e.currentTarget.dataset.summary);
+                    const title = decodeURIComponent(e.currentTarget.dataset.title);
+                    openShareModal(summary, title);
+                });
+            });
+        }
+
+
+        // --- Theme Management ---
+        const themeCheck = () => {
+            const userTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (userTheme === 'dark' || (!userTheme && systemTheme)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+        const themeSwitch = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+        themeToggle.addEventListener('click', themeSwitch);
+        
+
+        // --- UI Interactions ---
+        function activateUploadTab() {
+            uploadTab.classList.add('border-accent-blue', 'text-accent-blue');
+            uploadTab.classList.remove('text-light-text-secondary', 'dark:text-dark-text-secondary');
+            textTab.classList.remove('border-accent-blue', 'text-accent-blue');
+            textTab.classList.add('text-light-text-secondary', 'dark:text-dark-text-secondary');
+            uploadInputSection.classList.remove('hidden');
+            textInputSection.classList.add('hidden');
+            docText.value = '';
+        }
+
+        textTab.addEventListener('click', () => {
+            textTab.classList.add('border-accent-blue', 'text-accent-blue');
+            textTab.classList.remove('text-light-text-secondary', 'dark:text-dark-text-secondary');
+            uploadTab.classList.remove('border-accent-blue', 'text-accent-blue');
+            uploadTab.classList.add('text-light-text-secondary', 'dark:text-dark-text-secondary');
+            textInputSection.classList.remove('hidden');
+            uploadInputSection.classList.add('hidden');
+            clearFileUpload();
+        });
+
+        uploadTab.addEventListener('click', activateUploadTab);
+
+        toneSelector.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tone-button')) {
+                if(currentAudio && !currentAudio.paused) currentAudio.pause();
+                const oldTone = selectedTone;
+                toneSelector.querySelector('.active').classList.remove('active');
+                e.target.classList.add('active');
+                selectedTone = e.target.dataset.tone;
+                 if (currentAnalysisData && oldTone !== selectedTone) {
+                    analyzeDocument(true); // Re-analyze for new tone
+                }
+            }
+        });
+
+        outputTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                if(currentAudio && !currentAudio.paused) currentAudio.pause();
+                outputTabs.forEach(t => t.classList.remove('active'));
+                outputPanels.forEach(p => p.classList.add('hidden'));
+
+                tab.classList.add('active');
+                const targetPanel = document.getElementById(tab.dataset.target);
+                if (targetPanel) {
+                    targetPanel.classList.remove('hidden');
+                }
+            });
+        });
+        
+        // --- Modal Logic ---
+        function toggleModal(modal, show) {
+            if (show) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            } else {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        function openCopilotModal(title, explanation) {
+            activeClause.title = title;
+            activeClause.explanation = explanation;
+            copilotClauseTitle.textContent = title;
+            const originalExplanationText = translations[currentLang].copilotOriginalExplanation || "Original Explanation:";
+            copilotClauseExplanation.textContent = `${originalExplanationText} "${explanation}"`;
+            copilotResultWrapper.classList.add('hidden');
+            copilotResult.textContent = '';
+            toggleModal(copilotModal, true);
+        }
+        function closeCopilot() { toggleModal(copilotModal, false); }
+        closeCopilotModal.addEventListener('click', closeCopilot);
+
+        function openDeleteModal(id) {
+            confirmDeleteButton.dataset.id = id;
+            toggleModal(confirmDeleteModal, true);
+        }
+        function closeDeleteModal() { toggleModal(confirmDeleteModal, false); }
+        cancelDeleteButton.addEventListener('click', closeDeleteModal);
+
+        confirmDeleteButton.addEventListener('click', (e) => {
+            const idToDelete = parseInt(e.currentTarget.dataset.id, 10);
+            let history = getHistory();
+            history = history.filter(item => item.id !== idToDelete);
+            localStorage.setItem('docPalHistory', JSON.stringify(history));
+            renderHistory();
+            closeDeleteModal();
+        });
+
+        function openShareModal(summary, title) {
+            shareTitle.textContent = title;
+            shareSummaryText.value = summary;
+            copySummaryButton.querySelector('span').textContent = translations[currentLang].copyButton;
+            copySummaryButton.disabled = false;
+            toggleModal(shareModal, true);
+        }
+        function handleCloseShareModal() { toggleModal(shareModal, false); }
+        closeShareModal.addEventListener('click', handleCloseShareModal);
+
+        copySummaryButton.addEventListener('click', () => {
+            shareSummaryText.select();
+            document.execCommand('copy');
+            copySummaryButton.querySelector('span').textContent = translations[currentLang].copiedButton || `Copied!`;
+            copySummaryButton.disabled = true;
+        });
+
+        async function handleCopilotAction(prompt) {
+            copilotLoading.classList.remove('hidden');
+            copilotResultWrapper.classList.add('hidden');
+            try {
+                const result = await callGeminiAPI(API_URL, {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.2 },
+                    systemInstruction: { parts: [{ text: `You are a helpful AI assistant. Provide the response in ${translations[currentLang].title}.` }] }
+                });
+                copilotResult.textContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
+                copilotResultWrapper.classList.remove('hidden');
+            } catch (error) {
+                copilotResult.textContent = "An error occurred: " + error.message;
+                copilotResultWrapper.classList.remove('hidden');
+            } finally {
+                copilotLoading.classList.add('hidden');
+            }
+        }
+        
+        reExplainButton.addEventListener('click', () => {
+            const prompt = `Re-explain the following concept in extremely simple, everyday terms in ${translations[currentLang].title}. Use an analogy if it helps.\n\nCONCEPT: The clause "${activeClause.title}" means "${activeClause.explanation}"`;
+            handleCopilotAction(prompt);
+        });
+
+        whatIfButton.addEventListener('click', () => {
+            const prompt = `Based on the legal clause "${activeClause.title}" (which means: "${activeClause.explanation}"), generate a single, insightful "what if" question in ${translations[currentLang].title} that a person signing the document should consider. Frame it as a question.`;
+            handleCopilotAction(prompt);
+        });
+
+        draftEmailButton.addEventListener('click', () => {
+            const prompt = `A legal document has a clause titled "${activeClause.title}", which means: "${activeClause.explanation}".\n\nDraft a short, polite, and professional email in ${translations[currentLang].title} to the other party (e.g., a landlord, a service provider) asking for clarification or making a request related to this specific clause. Make the subject line clear and leave a placeholder like [Your Name] for the signature.`;
+            handleCopilotAction(prompt);
+        });
+
+
+        // --- File Upload Logic ---
+        function handleFileUpload(file) {
+            if (!file) return;
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    uploadedFile = { name: file.name, type: file.type, base64: reader.result.split(',')[1] };
+                    updateFilePreview(file.name, "image");
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type === 'application/pdf') {
+                 uploadedFile = { name: file.name, type: file.type, fileObject: file };
+                 updateFilePreview(file.name, "pdf");
+            } else {
+                alert("Unsupported file type. Please upload a PNG, JPG, or PDF.");
+            }
+        }
+
+        async function extractTextFromPdf(file) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = async (event) => {
+                    try {
+                        const pdf = await pdfjsLib.getDocument({ data: event.target.result }).promise;
+                        let textContent = '';
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const text = await page.getTextContent();
+                            textContent += text.items.map(s => s.str).join(' ') + '\n';
+                        }
+                        resolve(textContent);
+                    } catch (error) {
+                        reject('Failed to extract text from PDF.');
+                    }
+                };
+                reader.onerror = () => reject('Failed to read PDF file.');
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function updateFilePreview(name, type) {
+            fileName.textContent = name.length > 25 ? `${name.substring(0, 22)}...` : name;
+            fileIcon.className = `fas ${type === 'image' ? 'fa-file-image' : 'fa-file-pdf'} text-3xl ${type === 'pdf' ? 'text-red-500' : 'text-accent-blue'}`;
+            uploadPrompt.classList.add('hidden');
+            filePreview.classList.remove('hidden');
+            filePreview.classList.add('flex');
+        }
+        function clearFileUpload() {
+            uploadedFile = null;
+            docUpload.value = '';
+            uploadPrompt.classList.remove('hidden');
+            filePreview.classList.add('hidden');
+        }
+
+        dropZone.addEventListener('click', () => docUpload.click());
+        docUpload.addEventListener('change', (e) => handleFileUpload(e.target.files[0]));
+        removeFile.addEventListener('click', (e) => { e.stopPropagation(); clearFileUpload(); });
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            inputCard.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            inputCard.addEventListener(eventName, () => inputCard.classList.add('drag-over'));
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            inputCard.addEventListener(eventName, () => inputCard.classList.remove('drag-over'));
+        });
+        inputCard.addEventListener('drop', e => {
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                activateUploadTab();
+                handleFileUpload(file);
+            }
+        });
+
+        // --- Gemini API Call ---
+        const API_KEY = "AIzaSyBUbgMlwrHlJjBism8kAuAX0dgSKTEX7QY"; // Your API Key
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+        const TTS_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+
+        async function callGeminiAPI(url, payload, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    if (i < retries - 1) await new Promise(res => setTimeout(res, delay * Math.pow(2, i))); else throw error;
+                }
+            }
+        }
+        
+        async function analyzeDocument(isRerun = false) {
+            if (currentAudio && !currentAudio.paused) currentAudio.pause();
+            let documentText = docText.value.trim();
+            if (!isRerun && !documentText && !uploadedFile) {
+                 alert('Please provide some text or a document to analyze.');
+                return;
+            }
+             if (isRerun && !documentContentForQA) {
+                return;
+            }
+
+            analyzeButton.disabled = true;
+            outputSection.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            saveSection.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            
+            if (isRerun) {
+                loadingText.textContent = translations[currentLang].loadingTranslating;
+            } else {
+                loadingText.textContent = translations[currentLang].loadingPreparing;
+            }
+
+
+            try {
+                if (!isRerun) {
+                    if (uploadedFile && uploadedFile.type.startsWith('image/')) {
+                        loadingText.textContent = translations[currentLang].loadingExtracting + ' (Image)...';
+                        const extractionResult = await callGeminiAPI(API_URL, {
+                            contents: [{ parts: [{ text: "Extract all text from this image of a document." }, { inlineData: { mimeType: uploadedFile.type, data: uploadedFile.base64 } }] }]
+                        });
+                        documentText = extractionResult.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                        if (!documentText) throw new Error("Could not extract text from the image.");
+                    } else if (uploadedFile && uploadedFile.type === 'application/pdf') {
+                        loadingText.textContent = translations[currentLang].loadingExtracting + ' (PDF)...';
+                        documentText = await extractTextFromPdf(uploadedFile.fileObject);
+                    }
+                    documentContentForQA = documentText; // Save the original text
+                } else {
+                    documentText = documentContentForQA; // Use stored text
+                }
+
+
+                loadingText.textContent = translations[currentLang].loadingAnalyzing;
+                
+                const langName = { en: 'English', hi: 'Hindi', bn: 'Bengali', mr: 'Marathi', te: 'Telugu'}[currentLang];
+
+                const schema = {
+                    type: "OBJECT",
+                    properties: {
+                        summary: { type: "STRING" },
+                        key_clauses: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    clause_title: { type: "STRING" },
+                                    explanation: { type: "STRING" },
+                                    risk_level: { type: "STRING", enum: ["High", "Medium", "Low", "Info"] }
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                 const tonePrompts = {
+                    Simple: `Explain this entire document as if you were talking to a friend who has no legal knowledge. Use very simple, everyday language. Provide a summary that is about 30% longer than a brief overview, ensuring it covers the main points comprehensively but still simply. Avoid jargon completely and use analogies if it helps. Focus on what the person signing this document needs to know, what their rights are, and what they are agreeing to do in practice. For very long documents, focus on the most important overarching themes.`,
+                    Professional: `Generate a professional, executive-level summary of this document. The tone should be formal and objective. Structure the analysis to highlight key legal and commercial implications, obligations for all parties, and potential areas of risk from a business perspective. For longer documents, provide a slightly more detailed executive summary but maintain a high-level focus on strategic implications. This should be suitable for inclusion in a corporate briefing or memo.`,
+                    Brief: `Give me the absolute bare-bones summary of this document. Use bullet points. I only want to know the most critical actions, dates, and high-risk items. Be as brief and direct as possible, like a quick-glance checklist. Even for very long documents, keep this extremely concise.`,
+                    Detailed: `Provide a comprehensive, line-by-line analysis of this document. For each significant clause, provide a detailed explanation, discuss its potential implications, and give a practical example of how it might apply. For long documents, be thorough, but structure the output with clear subheadings for readability if needed. The goal is a deep, exhaustive understanding of every part of the document.`
+                };
+
+
+                const analysisPayload = {
+                    contents: [{
+                        parts: [{
+                            text: `
+You have two tasks. First, identify the key clauses from the document. This identification must be objective and consistent. Second, write a summary based on the specified tone.
+
+TASK 1: OBJECTIVE CLAUSE ANALYSIS
+Analyze the document and identify the most critical legal clauses. For each, provide a clause_title, a simple explanation, and a risk_level (High, Medium, Low, or Info). This part of the output should not change based on the summary tone.
+
+TASK 2: TONAL SUMMARY
+Now, write a summary of the document using the following tone: "${tonePrompts[selectedTone]}"
+
+IMPORTANT: The entire response (summary, clause titles, explanations) must be in the ${langName} language.
+
+DOCUMENT TO ANALYZE:
+---
+${documentText}
+`
+                        }]
+                    }],
+                    generationConfig: { 
+                        temperature: 0.2,
+                        responseMimeType: "application/json", 
+                        responseSchema: schema 
+                    },
+                    systemInstruction: { parts: [{ text: `You are 'Document Pal', an AI assistant that demystifies complex documents in the user's chosen language. You fulfill two roles: first as an objective clause identifier, and second as a tonal summary writer. Ensure the clause identification is consistent. Do not provide legal advice.` }] }
+                };
+
+                const result = await callGeminiAPI(API_URL, analysisPayload);
+                const analysisData = JSON.parse(result.candidates?.[0]?.content?.parts?.[0]?.text);
+                
+                currentAnalysisData = analysisData;
+                displayResults(analysisData);
+
+            } catch (error) {
+                resultsContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-500 p-4 rounded-xl"><p class="font-bold">An Error Occurred</p><p>${error.message}</p></div>`;
+                resultsContainer.classList.remove('hidden');
+            } finally {
+                loadingSpinner.classList.add('hidden');
+                analyzeButton.disabled = false;
+            }
+        }
+        
+        function displayResults(data) {
+            summaryContent.textContent = data.summary || "No summary was generated.";
+            clausesContainer.innerHTML = '';
+
+            const riskOrder = { "High": 4, "Medium": 3, "Low": 2, "Info": 1 };
+
+            const sortedClauses = (data.key_clauses || []).sort((a, b) => {
+                const riskA = riskOrder[a.risk_level] || 0;
+                const riskB = riskOrder[b.risk_level] || 0;
+                return riskB - riskA; // Sort descending
+            });
+
+            sortedClauses.forEach(clause => {
+                const riskInfo = {
+                    High: { bg: 'red-100', color: 'red-800', darkBg: 'red-900/20', icon: 'fa-shield-halved' },
+                    Medium: { bg: 'yellow-100', color: 'yellow-800', darkBg: 'yellow-900/20', icon: 'fa-exclamation-circle' },
+                    Low: { bg: 'green-100', color: 'green-800', darkBg: 'green-900/20', icon: 'fa-check-circle' },
+                    Info: { bg: 'blue-100', color: 'blue-800', darkBg: 'blue-900/20', icon: 'fa-info-circle' }
+                }[clause.risk_level] || { bg: 'gray-100', color: 'gray-800', darkBg: 'gray-700', icon: 'fa-circle' };
+
+                const clauseEl = document.createElement('div');
+                clauseEl.className = `p-5 rounded-xl border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg`;
+                
+                const encodedTitle = encodeURIComponent(clause.clause_title);
+                const encodedExplanation = encodeURIComponent(clause.explanation);
+
+                clauseEl.innerHTML = `
+                    <div class="flex items-start justify-between flex-wrap gap-2">
+                        <h4 class="font-semibold text-light-text-primary dark:text-dark-text-primary">${clause.clause_title}</h4>
+                        <div class="flex items-center gap-4">
+                             <span class="text-xs font-semibold inline-flex items-center px-2 py-0.5 rounded-full bg-${riskInfo.bg} text-${riskInfo.color} dark:bg-${riskInfo.darkBg}">
+                                <i class="fas ${riskInfo.icon} mr-1.5"></i>
+                                ${clause.risk_level} Risk
+                            </span>
+                            <button class="copilot-button text-light-text-secondary dark:text-dark-text-secondary hover:text-accent-blue transition-colors" data-title="${encodedTitle}" data-explanation="${encodedExplanation}">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-light-text-secondary dark:text-dark-text-secondary clause-explanation">${clause.explanation}</p>
+                `;
+                clausesContainer.appendChild(clauseEl);
+            });
+            
+            clausesContainer.querySelectorAll('.copilot-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    const title = decodeURIComponent(target.dataset.title);
+                    const explanation = decodeURIComponent(target.dataset.explanation);
+                    openCopilotModal(title, explanation);
+                });
+            });
+
+            outputTabs.forEach(t => t.classList.remove('active'));
+            outputPanels.forEach(p => p.classList.add('hidden'));
+            summaryTab.classList.add('active');
+            summaryPanel.classList.remove('hidden');
+
+            saveSection.classList.remove('hidden');
+            saveNameInput.value = uploadedFile?.name || `Analysis - ${new Date().toLocaleString()}`;
+            saveButton.disabled = false;
+            saveButton.querySelector('span').textContent = translations[currentLang].saveButton;
+            saveNameError.classList.add('hidden');
+
+
+            resultsContainer.classList.remove('hidden');
+            qaAnswer.classList.add('hidden');
+            qaInput.value = '';
+        }
+
+        async function handleQA() {
+            const question = qaInput.value.trim();
+            if (!question || !documentContentForQA) return;
+
+            qaButton.disabled = true;
+            qaLoading.classList.remove('hidden');
+            qaAnswer.classList.add('hidden');
+            
+            const langName = { en: 'English', hi: 'Hindi', bn: 'Bengali', mr: 'Marathi', te: 'Telugu'}[currentLang];
+
+            try {
+                const result = await callGeminiAPI(API_URL, {
+                    contents: [{ parts: [{ text: `Based *only* on the provided document, answer the user's question simply and in the ${langName} language. If the answer is not in the document, say so in ${langName}.\n\nQUESTION: "${question}"\n\nDOCUMENT:\n---\n${documentContentForQA}` }] }],
+                    generationConfig: { temperature: 0.2 },
+                    systemInstruction: { parts: [{ text: "You are an AI assistant answering questions about a specific document." }] }
+                });
+                qaAnswer.textContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't find an answer.";
+                qaAnswer.classList.remove('hidden');
+            } catch (error) {
+                qaAnswer.textContent = "An error occurred while getting the answer.";
+                qaAnswer.classList.remove('hidden');
+            } finally {
+                qaButton.disabled = false;
+                qaLoading.classList.add('hidden');
+            }
+        }
+        
+        // --- Audio Handling ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+            const blockAlign = numChannels * (bitsPerSample / 8);
+            const dataSize = pcmData.length * pcmData.BYTES_PER_ELEMENT;
+            
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+            
+            // RIFF header
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(view, 8, 'WAVE');
+            
+            // fmt sub-chunk
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+            
+            // data sub-chunk
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            // PCM data
+            const pcm = new Int16Array(pcmData.buffer);
+            for (let i = 0; i < pcm.length; i++) {
+                view.setInt16(44 + i * 2, pcm[i], true);
+            }
+            
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        async function toggleReadAloud() {
+            const icon = readAloudButton.querySelector('i');
+
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                return;
+            }
+
+            const activeTab = document.querySelector('.output-tab.active');
+            let textToRead = '';
+
+            if (activeTab) {
+                const activePanelId = activeTab.dataset.target;
+                if (activePanelId === 'summary-panel') {
+                    textToRead = summaryContent.textContent;
+                } else if (activePanelId === 'clauses-panel') {
+                    const clauseElements = clausesContainer.querySelectorAll('.p-5');
+                    textToRead = Array.from(clauseElements).map(clause => {
+                        const title = clause.querySelector('h4').textContent;
+                        const explanation = clause.querySelector('p').textContent;
+                        return `${title}. ${explanation}`;
+                    }).join('\n\n');
+                } else if (activePanelId === 'qa-panel') {
+                     if (!qaAnswer.classList.contains('hidden')) {
+                        textToRead = qaAnswer.textContent;
+                    }
+                }
+            }
+
+            if (!textToRead.trim()) return;
+            
+            icon.className = 'fas fa-spinner animate-spin';
+            
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: textToRead }] }],
+                    generationConfig: { responseModalities: ["AUDIO"] },
+                };
+                const result = await callGeminiAPI(TTS_API_URL, payload);
+                const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+                if (audioData) {
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, 24000); // Gemini TTS uses 24kHz sample rate
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+                    
+                    icon.className = 'fas fa-stop-circle animate-pulse';
+
+                    currentAudio.onended = () => {
+                        icon.className = 'fas fa-volume-up';
+                        icon.classList.remove('animate-pulse');
+                    };
+                    currentAudio.onpause = () => {
+                        icon.className = 'fas fa-volume-up';
+                         icon.classList.remove('animate-pulse');
+                    };
+
+                } else {
+                     throw new Error('No audio data received from API.');
+                }
+            } catch (error) {
+                alert('Sorry, could not generate audio. ' + error.message);
+                icon.className = 'fas fa-volume-up';
+            }
+        }
+
+
+        readAloudButton.addEventListener('click', toggleReadAloud);
+        analyzeButton.addEventListener('click', () => analyzeDocument(false));
+        qaButton.addEventListener('click', handleQA);
+        qaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleQA(); });
+        
+        saveButton.addEventListener('click', () => {
+            const customName = saveNameInput.value.trim();
+            saveNameError.classList.add('hidden');
+
+            if (!customName) {
+                saveNameError.textContent = translations[currentLang].saveErrorNoName;
+                saveNameError.classList.remove('hidden');
+                return;
+            }
+            if (!currentAnalysisData) {
+                saveNameError.textContent = "No analysis data to save.";
+                saveNameError.classList.remove('hidden');
+                return;
+            }
+
+            const history = getHistory();
+            if (history.some(item => item.title.toLowerCase() === customName.toLowerCase())) {
+                saveNameError.textContent = translations[currentLang].saveErrorExists;
+                saveNameError.classList.remove('hidden');
+                return;
+            }
+            
+            saveToHistory(customName, currentAnalysisData);
+            saveButton.querySelector('span').textContent = translations[currentLang].savedButton || 'Saved!';
+            saveButton.disabled = true;
+        });
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            themeCheck();
+            const savedLang = localStorage.getItem('docPalLang') || 'en';
+            setLanguage(savedLang);
+
+            // Splash screen logic
+            const splashScreen = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splashScreen.classList.add('hidden-splash');
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 500); // Match CSS transition duration
+            }, 2000); // Splash screen visible for 2 seconds
+        });
+
+    </script>
+</body>
+</html>
+
+
